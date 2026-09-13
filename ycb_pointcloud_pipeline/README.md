@@ -1,4 +1,4 @@
-# ycb_pointcloud_pipeline (Jetson Thor, Ubuntu 24.04 / ROS2 Humble)
+# ycb_pointcloud_pipeline (Jetson Thor, Ubuntu 24.04 / ROS2 Jazzy)
 
 RealSense D435i -> RGB + aligned depth -> Grounded-SAM detection, filtered
 against a YAML list of target YCB objects -> per-object point cloud
@@ -15,20 +15,20 @@ isn't currently visible just produces no message that frame.
 
 This revision assumes:
 - **Jetson Thor**, Ubuntu **24.04 (Noble)** as the base OS
-- **ROS 2 Humble already installed and working** (via NVIDIA's JetPack 7 /
-  Isaac ROS build for Noble -- upstream OSRF only ships Jazzy for 24.04,
-  so this is NVIDIA's own backport, not the standard OSRF package set)
-- **Python 3.12** as the system `python3` (Noble's default -- notably
-  *not* the 3.10 that vanilla ROS 2 Humble docs usually assume, since
-  those target 22.04). Nothing in this package hardcodes a Python
-  version, but if you hit a dependency that only ships 3.10 wheels,
-  this is why.
+- **ROS 2 Jazzy already installed and working**. Unlike Humble, Jazzy is
+  the distro upstream OSRF officially targets *for* 24.04 -- so this is
+  the standard package set, not a vendor backport, which makes this
+  combination the more straightforward one of the two.
+- **Python 3.12** as the system `python3`. This is also Jazzy's own
+  official target Python version (unlike Humble, which targets 3.10),
+  so there's no version mismatch to work around here.
 
 Confirm before proceeding:
 ```bash
 lsb_release -a          # expect: Ubuntu 24.04
 python3 --version       # expect: Python 3.12.x
-ros2 --version          # confirm Humble is actually on PATH
+ros2 --version          # confirm it reports Jazzy
+echo $ROS_DISTRO        # expect: jazzy
 nvcc --version
 ```
 If any of these don't match, some commands below may need adjusting
@@ -39,7 +39,7 @@ starting point, not gospel, for a platform this new.
 
 ## 1. System packages (apt)
 
-Since ROS 2 Humble is already installed, this just adds the packages
+Since ROS 2 Jazzy is already installed, this just adds the packages
 this pipeline needs on top of it:
 
 ```bash
@@ -47,18 +47,18 @@ sudo apt update
 sudo apt install -y \
     python3-venv \
     python3-pip \
-    ros-humble-realsense2-camera \
-    ros-humble-diagnostic-updater \
-    ros-humble-diagnostic-msgs \
-    ros-humble-cv-bridge \
-    ros-humble-vision-opencv \
+    ros-jazzy-realsense2-camera \
+    ros-jazzy-diagnostic-updater \
+    ros-jazzy-diagnostic-msgs \
+    ros-jazzy-cv-bridge \
+    ros-jazzy-vision-opencv \
     python3-colcon-common-extensions
 ```
 
-If any `ros-humble-*` package 404s, your Humble apt sources aren't fully
-set up yet -- re-run whatever NVIDIA JetPack/Isaac ROS setup script you
-used to get `ros2 --version` working in the first place, since it's
-likely what's providing the Humble-on-Noble apt repo.
+If any `ros-jazzy-*` package 404s, your ROS 2 apt sources aren't fully
+set up -- follow OSRF's standard ROS 2 Jazzy install instructions for
+Ubuntu 24.04 (adding `packages.ros.org` as an apt source) before retrying
+the block above.
 
 Plug in the D435i via USB and sanity-check it's detected:
 ```bash
@@ -208,7 +208,7 @@ at startup.
 mkdir -p ~/ycb_pcld_ws/src
 cp -r ycb_pointcloud_pipeline ~/ycb_pcld_ws/src/
 cd ~/ycb_pcld_ws
-source /opt/ros/humble/setup.bash
+source /opt/ros/jazzy/setup.bash
 python3 -m colcon build --packages-select ycb_pointcloud_pipeline
 source install/setup.bash
 ```
@@ -225,7 +225,7 @@ pip-installed above.
 
 ```bash
 source ~/pcld/bin/activate
-source /opt/ros/humble/setup.bash
+source /opt/ros/jazzy/setup.bash
 source ~/ycb_pcld_ws/install/setup.bash
 ros2 launch ycb_pointcloud_pipeline ycb_pipeline.launch.py
 ```
