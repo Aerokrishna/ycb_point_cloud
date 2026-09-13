@@ -1,0 +1,15 @@
+# NOTE: torch/torchvision are intentionally NOT pinned here -- on Jetson
+# Thor they must come from a GPU-enabled build (see README.md section 3),
+# not a generic PyPI wheel. Install those separately BEFORE this file.
+#
+# Usage (inside the activated venv, after installing torch/torchvision):
+#   pip install -r requirements.txt
+#   pip install git+https://github.com/facebookresearch/segment-anything.git
+#   (then clone + pip install -e GroundingDINO -- see README.md section 4)
+
+opencv-python
+numpy
+pyyaml
+
+# Do NOT add: jax, jaxlib, flax, optax, chex, tensorflow, open3d
+# See README.md section 4 for why.

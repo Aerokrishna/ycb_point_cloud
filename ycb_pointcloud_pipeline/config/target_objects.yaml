@@ -1,0 +1,26 @@
+# List the exact YCB objects you want this pipeline to detect and publish
+# point clouds for. Names are used as open-vocabulary text prompts for
+# Grounding DINO, so phrase them the way you'd describe the object in
+# plain English (this is also how most YCB benchmark papers name them).
+#
+# Any object NOT in this list is ignored entirely -- no detection, no
+# point cloud, no publish -- even if Grounding DINO/SAM could find it.
+# Any object IN this list that isn't currently visible in the frame is
+# simply not published on that frame (its topic just stays silent/stale
+# until the object reappears).
+
+target_objects:
+  - "master chef can"
+  - "cracker box"
+  - "sugar box"
+  - "tomato soup can"
+  - "mustard bottle"
+  - "tuna fish can"
+  - "banana"
+  - "bowl"
+  - "mug"
+  - "power drill"
+  - "wood block"
+  - "scissors"
+  - "large marker"
+  - "foam brick"
